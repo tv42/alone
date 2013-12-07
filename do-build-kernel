@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+install -d -m0755 linux
+(
+    cd linux
+    git init --quiet
+    # opportunistically avoid internet traffic
+    printf "$HOME/src/linux/.git/objects\n" >.git/objects/info/alternates
+    if [ -z "$(git config remote.kernel.url)" ]; then
+	git remote add kernel https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+    fi
+    if ! git rev-parse --verify --quiet kernel/master >/dev/null; then
+	git fetch kernel
+    fi
+    if ! git rev-parse --verify --quiet HEAD >/dev/null; then
+	git merge --ff-only kernel/master
+    fi
+)
+
+install -d -m0755 build
+make_kernel() {
+    make -C linux O="$PWD/build" "$@"
+}
+make_kernel allnoconfig ARCH=x86_64 KCONFIG_ALLCONFIG="$PWD/kernel.conf"
+make_kernel olddefconfig
+CPUS="$(grep -c '^processor\s*:' /proc/cpuinfo || :)"
+make_kernel -j"${CPUS:-1}" bzImage

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+exec qemu-system-x86_64 \
+    -name 'hello-world' \
+    -sandbox on \
+    -smp 4 \
+    -nographic \
+    -vga none \
+    -balloon virtio \
+    -kernel build/arch/x86/boot/bzImage \
+    -initrd hello-world.alone \
+    -append 'console=ttyS0,115200n8'

@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+PKG=github.com/tv42/alone/examples/hello-world
+NAME="${PKG##*/}"
+OUT="$NAME.alone"
+T="$OUT.tmp"
+trap "rm -f -- \"$T\"" EXIT
+go build -tags alone -o "$T" -- "$PKG"
+go run main.go <"$T" >"$OUT"

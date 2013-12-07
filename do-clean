@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+rm -rf build
+(
+    cd linux
+    git clean -fdx
+)
+rm -f -- hello-world.alone
