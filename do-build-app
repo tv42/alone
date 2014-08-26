@@ -6,5 +6,5 @@ NAME="${PKG##*/}"
 OUT="$NAME.alone"
 T="$OUT.tmp"
 trap "rm -f -- \"$T\"" EXIT
-go build -tags alone -o "$T" -- "$PKG"
+go build -tags 'alone netgo' -o "$T" -- "$PKG"
 go run main.go <"$T" >"$OUT"
