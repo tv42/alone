@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+build () {
+    PKG="$1"
+    NAME="${PKG##*/}"
+    OUT="$NAME.alone"
+    T="$OUT.tmp"
+    trap "rm -f -- \"$T\"" EXIT
+    go build -tags 'alone netgo' -o "$T" -- "$PKG"
+    go run main.go <"$T" >"$OUT"
+}
+
+for p in "$@"; do
+    build "$p"
+done

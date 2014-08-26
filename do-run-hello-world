@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+./build-initramfs ./examples/hello-world
+
 exec qemu-system-x86_64 \
     -name 'hello-world' \
     -sandbox on \

@@ -21,8 +21,12 @@ Here's how to run them:
 	./do-build-kernel
 
 	# build and run the hello world example app
-	./do-build-app
-	./do-run
+	./do-run-hello-word
+
+	# build and run the network app and forward port 8000 to it
+	./do-run-network
+	# in a browser, open http://localhost:8000/
+	# when done, type control-A x
 
 This assumes `x86_64` platform and a working install of
 `qemu-system-x86_64`.

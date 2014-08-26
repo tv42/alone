@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+./build-initramfs ./examples/network
+
+exec qemu-system-x86_64 \
+    -name 'hello-world' \
+    -sandbox on \
+    -smp 4 \
+    -nographic \
+    -vga none \
+    -balloon virtio \
+    -kernel build/arch/x86/boot/bzImage \
+    -initrd network.alone \
+    -append 'console=ttyS0,115200n8 ip=dhcp' \
+    -net nic,model=virtio,name=eth0 \
+    -net user,hostfwd=tcp:127.0.0.1:8000-:80
