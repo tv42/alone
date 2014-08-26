@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/tv42/alone/vm"
 	"runtime"
+
+	"github.com/tv42/alone/vm"
 )
 
 func main() {
