@@ -2,10 +2,12 @@ package main
 
 import (
 	"compress/gzip"
-	"github.com/surma/gocpio"
+	"debug/elf"
 	"io"
 	"log"
 	"os"
+
+	"github.com/surma/gocpio"
 )
 
 func getSize(r io.Seeker) (int64, error) {
@@ -48,10 +50,32 @@ func writeCpio(w io.Writer, init io.ReadSeeker) error {
 	return archive.Close()
 }
 
+func isStatic(r io.ReaderAt) (bool, error) {
+	f, err := elf.NewFile(r)
+	if err != nil {
+		return false, err
+	}
+	libs, err := f.ImportedLibraries()
+	if err != nil {
+		return false, err
+	}
+	if len(libs) > 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
 func main() {
+	static, err := isStatic(os.Stdin)
+	if err != nil {
+		log.Fatalf("cannot decode ELF header: %v", err)
+	}
+	if !static {
+		log.Fatal("input binary must be statically linked")
+	}
+
 	w := gzip.NewWriter(os.Stdout)
 	w.Header.Name = "initramfs.cpio"
-	var err error
 	err = writeCpio(w, os.Stdin)
 	if err != nil {
 		log.Fatalf("cpio failed: %v", err)
