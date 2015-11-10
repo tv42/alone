@@ -16,13 +16,14 @@ func showNets() {
 	}
 
 	for _, iface := range ifaces {
+		fmt.Printf("%s %v %v\n", iface.Name, iface.Flags, iface.HardwareAddr)
 		addrs, err := iface.Addrs()
 		if err != nil {
 			fmt.Println("error: ", err)
 			continue
 		}
 		for _, addr := range addrs {
-			fmt.Printf("  %s %s %s\n", iface.Name, addr.Network(), addr.String())
+			fmt.Printf("  %s %s\n", addr.Network(), addr.String())
 		}
 	}
 }
